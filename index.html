@@ -18,6 +18,22 @@
         h1 {
             color: #007bff;
             margin-bottom: 30px;
+            text-align: center; /* Додав для центрування багаторядкового заголовка */
+        }
+
+        .company-names {
+            display: block;
+            margin-top: 5px; /* Невеликий відступ для другого рядка */
+            font-size: 1.2em; /* Трохи більший розмір для акценту */
+        }
+        
+        /* Стилі для назв компаній, щоб вони були кольоровими і виділялися */
+        .ultranet {
+            color: #811e71;
+            font-weight: bold;
+        }
+        .isp-energy {
+            font-weight: bold;
         }
 
         .container {
@@ -83,13 +99,13 @@
             color: #38c172;
             min-height: 1.8em;
             line-height: 1.4;
-            margin-bottom: 15px; /* Додав відступ перед версією */
+            margin-bottom: 15px;
         }
 
         #version-info {
             font-size: 0.9em;
             color: #6c757d;
-            border-top: 1px solid #c3e6cb; /* Легка розділяюча лінія */
+            border-top: 1px solid #c3e6cb;
             padding-top: 10px;
             margin-top: 10px;
         }
@@ -97,7 +113,15 @@
 </head>
 <body>
 
-    <h1>📅 Розрахунок різниці років/місяців/днів між датами <span style="color: #811e71;">Ультранет</span> та <span style="color: #fff200;">I</span><span style="color: #00c100;">S</span><span style="color: #00d4ff;">P</span> Energy</h1>
+    <h1>
+        📅 Розрахунок різниці років/місяців/днів між датами
+        <span class="company-names">
+            <span class="ultranet">Ультранет</span> та 
+            <span class="isp-energy">
+                <span style="color: #fff200;">I</span><span style="color: #00c100;">S</span><span style="color: #00d4ff;">P</span> Energy
+            </span>
+        </span>
+    </h1>
 
     <div class="container">
         <div class="date-input-group">
@@ -118,8 +142,7 @@
         </div>
         
         <div id="version-info">
-            Версія 0.5
-        </div>
+            Версія 0.8 </div>
         </div>
 
     <script>
@@ -142,6 +165,7 @@
             }
 
             const diffTime = endDate - startDate;
+            // Math.ceil використовується для включення кінцевого дня
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
             // Розрахунок різниці в місяцях і днях (точний)
@@ -158,16 +182,18 @@
 
             if (days < 0) {
                 months--;
+                // Отримуємо останній день попереднього місяця
                 const prevMonthDate = new Date(endYear, endMonth, 0); 
                 days += prevMonthDate.getDate();
             }
 
-            // Фінальний вивід
+            // Фінальний вивід (Змінена послідовність виводу)
             if (diffDays === 0) {
                  resultDisplay.innerHTML = 'Дати **збігаються**. Різниця: 0 днів.';
             } else {
-                let resultText = `Загальна різниця: ${diffDays} днів.`;
+                let resultText = '';
 
+                // Частина з місяцями та днями виводиться першою
                 if (months >= 0 && (months > 0 || days > 0)) {
                     let monthsText = months > 0 ? `${months} міс.` : '';
                     let daysText = days > 0 ? `${days} дн.` : '';
@@ -175,9 +201,12 @@
                     const durationText = [monthsText, daysText].filter(Boolean).join(' та ');
 
                     if (durationText) {
-                         resultText += `<br>(Це становить ${durationText})`
+                         resultText += `(Це становить **${durationText}**)<br>`
                     }
                 }
+                
+                // Загальна різниця в днях виводиться наступною
+                resultText += `Загальна різниця: **${diffDays}** днів.`;
                 
                 resultDisplay.innerHTML = resultText;
             }
