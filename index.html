@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Розрахунок Різниці Дат</title>
+    <title>Калькулятор різниці днів Ультранет та ISP Energy</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -64,7 +64,7 @@
             width: 100%;
             max-width: 800px;
             padding: 25px;
-            background-color: #e9f7e9; /* Світло-зелений фон для результату */
+            background-color: #e9f7e9;
             border-radius: 10px;
             text-align: center;
             box-shadow: 0 4px 8px rgba(0,0,0,0.08);
@@ -73,41 +73,54 @@
 
         #result-section h2 {
             margin-top: 0;
-            color: #28a745; /* Зелений заголовок */
+            color: #28a745;
             font-size: 1.5em;
         }
 
         #result-display {
             font-size: 1.5em;
             font-weight: bold;
-            color: #38c172; /* Темніший зелений для самого результату */
+            color: #38c172;
             min-height: 1.8em;
             line-height: 1.4;
+            margin-bottom: 15px; /* Додав відступ перед версією */
+        }
+
+        #version-info {
+            font-size: 0.9em;
+            color: #6c757d;
+            border-top: 1px solid #c3e6cb; /* Легка розділяюча лінія */
+            padding-top: 10px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 
-    <h1>📅 Розрахунок Різниці Між Датами</h1>
+    <h1>📅 Розрахунок різниці років/місяців/днів між датами <span style="color: #811e71;">Ультранет</span> та <span style="color: #fff200;">I</span><span style="color: #00c100;">S</span><span style="color: #00d4ff;">P</span> Energy</h1>
 
     <div class="container">
         <div class="date-input-group">
-            <label for="start-date">🗓️ Початкова дата (Зліва):</label>
+            <label for="start-date">🗓️ Початкова дата:</label>
             <input type="date" id="start-date" name="start-date" onchange="calculateDifference()" required>
         </div>
 
         <div class="date-input-group">
-            <label for="end-date">➡️ Кінцева дата (Справа):</label>
+            <label for="end-date">➡️ Кінцева дата:</label>
             <input type="date" id="end-date" name="end-date" onchange="calculateDifference()" required>
         </div>
     </div>
 
     <div id="result-section">
-        <h2>⏱️ Результат Розрахунку</h2>
+        <h2>⏱️ Результат розрахунку</h2>
         <div id="result-display">
             Оберіть дві дати для розрахунку.
         </div>
-    </div>
+        
+        <div id="version-info">
+            Версія 0.5
+        </div>
+        </div>
 
     <script>
         function calculateDifference() {
@@ -120,7 +133,6 @@
                 return;
             }
 
-            // Створюємо дати з півночі за місцевим часом, щоб уникнути проблем із часовими поясами
             const startDate = new Date(startDateInput + 'T00:00:00');
             const endDate = new Date(endDateInput + 'T00:00:00');
 
@@ -129,9 +141,7 @@
                 return;
             }
 
-            // Розрахунок різниці в мілісекундах
             const diffTime = endDate - startDate;
-            // Розрахунок різниці в днях (округлюємо вгору, щоб різниця "сьогодні і завтра" була 1 день)
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
             // Розрахунок різниці в місяцях і днях (точний)
@@ -147,10 +157,7 @@
             let days = endDay - startDay;
 
             if (days < 0) {
-                // Віднімаємо місяць і додаємо кількість днів у попередньому місяці
                 months--;
-                // Отримуємо останній день попереднього місяця для кінцевої дати
-                // New Date(рік, місяць, 0) дає останній день попереднього місяця
                 const prevMonthDate = new Date(endYear, endMonth, 0); 
                 days += prevMonthDate.getDate();
             }
@@ -159,17 +166,16 @@
             if (diffDays === 0) {
                  resultDisplay.innerHTML = 'Дати **збігаються**. Різниця: 0 днів.';
             } else {
-                let resultText = `Загальна різниця: **${diffDays} днів**.`;
+                let resultText = `Загальна різниця: ${diffDays} днів.`;
 
                 if (months >= 0 && (months > 0 || days > 0)) {
                     let monthsText = months > 0 ? `${months} міс.` : '';
                     let daysText = days > 0 ? `${days} дн.` : '';
                     
-                    // Об'єднуємо місяці та дні
                     const durationText = [monthsText, daysText].filter(Boolean).join(' та ');
 
                     if (durationText) {
-                         resultText += `<br>(Це становить **${durationText}**)`
+                         resultText += `<br>(Це становить ${durationText})`
                     }
                 }
                 
@@ -177,15 +183,14 @@
             }
         }
         
-        // Встановлюємо сьогоднішню дату як значення за замовчуванням
+        // Встановлюємо сьогоднішню дату та дату за тиждень вперед
         document.addEventListener('DOMContentLoaded', () => {
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('start-date').value = today;
-            // Встановлюємо дату за тиждень вперед для кращої ілюстрації
             const nextWeek = new Date(new Date().getTime() + (7 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0];
             document.getElementById('end-date').value = nextWeek;
             
-            calculateDifference(); // Розрахувати при завантаженні
+            calculateDifference();
         });
 
     </script>
